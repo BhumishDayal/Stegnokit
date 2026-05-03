@@ -3,6 +3,9 @@ dist
 build
 coverage
 
+# Temp clone of the HF Space, used by deploy scripts.
+.hf-deploy
+
 # OS / editor
 .DS_Store
 Thumbs.db
