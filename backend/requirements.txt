@@ -1,0 +1,30 @@
+# Mirrors pyproject.toml. Used by deploy targets that don't read pyproject
+# (HF Spaces in non-docker mode, simple pip-install flows, etc.).
+
+# Web
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.12
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+
+# Crypto + ECC
+cryptography>=43.0.0
+reedsolo>=1.7.0
+
+# Image stack
+numpy>=1.26.0,<2.2
+Pillow>=10.4.0
+pillow-avif-plugin>=1.4.6
+scikit-image>=0.24.0
+scipy>=1.13.0
+
+# Image watermarking — TrustMark (Adobe, MIT)
+trustmark>=0.7.0
+torch>=2.2.0
+torchvision>=0.17.0
+
+# Audio stack
+soundfile>=0.12.1
+librosa>=0.10.2
+pydub>=0.25.1

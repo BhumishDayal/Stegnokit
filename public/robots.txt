@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow paths that won't ever exist publicly so accidental probes get
+# bounced cleanly even before the backend is in place.
+Disallow: /admin
+Disallow: /internal
+Disallow: /.env
+Disallow: /api/internal

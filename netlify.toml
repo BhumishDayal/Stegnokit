@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# Headers and redirects live in public/_headers and public/_redirects.
+# Those files are copied verbatim into dist/ at build time and applied by
+# Netlify's edge. Keeping them as files (instead of TOML blocks) lets us
+# version a multi-line CSP cleanly without TOML escaping pain.
+
+[[context.production.environment]]
+  # Production-only env overrides go here. Never put secrets in this file —
+  # use Netlify UI → Site settings → Environment variables for those.

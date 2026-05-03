@@ -1,0 +1,47 @@
+node_modules
+dist
+build
+coverage
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea
+.vscode/*
+!.vscode/extensions.json
+.claude/settings.local.json
+
+# Vite
+.vite
+*.local
+
+# Environment files — keep examples, ignore everything else.
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Build artifacts and source maps
+*.map
+
+# Backend (when it lands)
+__pycache__
+*.pyc
+.venv
+venv
+.python-version
+.pytest_cache
+.ruff_cache
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/models/*.pt
+backend/models/*.bin
+backend/models/*.safetensors

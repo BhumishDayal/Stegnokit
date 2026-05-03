@@ -1,0 +1,9 @@
+# Lightweight dependencies sufficient to run the crypto / ECC / codec / audio
+# unit tests. Skips PyTorch + TrustMark + image deps so devs can iterate on the
+# core stack without a 2 GB install.
+
+cryptography>=43.0.0
+reedsolo>=1.7.0
+numpy>=1.26.0,<2.2
+scipy>=1.13.0
+pytest>=8.3.0

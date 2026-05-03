@@ -1,0 +1,15 @@
+name: stegnokit
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - ffmpeg  # required by pydub for MP3/M4A/OGG/AAC encoding-decoding
+  - pip:
+      - -r requirements.txt
+variables:
+  # TrustMark's setup.py reads its README without specifying UTF-8 encoding,
+  # which fails on Windows (cp1252 default). Force Python to use UTF-8 for all
+  # file I/O — fixes the install and is good practice for anything multilingual.
+  PYTHONUTF8: "1"
