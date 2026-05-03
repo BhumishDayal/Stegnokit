@@ -1,0 +1,22 @@
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.ruff_cache
+.venv
+venv
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+.DS_Store
+Thumbs.db
+
+# Tests don't ship to production.
+tests
+conftest.py
+
+# Local-dev artifacts.
+*.log
+*.tmp
