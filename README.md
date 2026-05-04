@@ -1,32 +1,31 @@
-# Stegnokit
+# 🔐 Stegnokit
 
-Hide encrypted text inside images and audio. The payload survives JPEG re-compression, format conversion, and screenshots, so you can send the carrier through any chat app and the recipient (who has the password) can pull the message back out.
+[![Live](https://img.shields.io/badge/⚡_live-stegnokit.netlify.app-00d4ff?style=for-the-badge&logo=netlify&logoColor=white)](https://stegnokit.netlify.app)
+[![API](https://img.shields.io/badge/🤗_api-Hugging_Face-fcc72c?style=for-the-badge)](https://huggingface.co/spaces/Bhumish26/stegnokit-api)
+[![Built with](https://img.shields.io/badge/built_with-Vite_·_FastAPI-a855f7?style=for-the-badge)](https://github.com/BhumishDayal/Stegnokit)
 
-Live demo: **[stegnokit.netlify.app](https://stegnokit.netlify.app)**
+Hide encrypted text inside images and audio. The payload survives JPEG re-compression, format conversion, and screenshots — so you can send the carrier through any chat app and the recipient (with the password) can pull the message back out. ✨
 
-## How it actually works
+<p align="center">
+  <img src="https://image.thum.io/get/width/1200/noanimate/https://stegnokit.netlify.app/" alt="Stegnokit Studio" width="900" />
+</p>
 
-Drop a carrier (a meme, a photo, a voice note), type a message and a password, hit Encode. The message gets sealed with AES-256-GCM, wrapped in Reed-Solomon error correction, then embedded:
+## 🛠️ How it actually works
 
-**Images** use [TrustMark](https://github.com/adobe/trustmark) — a learned CNN watermarker from Adobe Research. It puts bits into perceptually-stable regions of the image instead of LSBs, which is what gives it screenshot-survival. The carrier is tiled into an N×N grid and each tile gets its own 100-bit watermark, so capacity scales with the grid (12 B at 1×1, ~200 B at 4×4 for a 1080p carrier).
+Drop a carrier (a meme, a photo, a voice note), type a message and a password, hit **Encode**. The message is sealed with AES-256-GCM, wrapped in Reed-Solomon error correction, and embedded:
 
-**Audio** uses direct-sequence spread-spectrum. A pseudo-random ±1 chip sequence — keyed by the password — is band-pass filtered to 1.5–4.5 kHz (where MP3/AAC keep the most detail) and added to the carrier at low amplitude. About 43 bits/sec at 44.1 kHz, so a 10-second voice note carries ~50 B of plaintext.
+🖼️ **Images** use [TrustMark](https://github.com/adobe/trustmark) — a learned CNN watermarker from Adobe Research that puts bits into perceptually-stable regions of the image instead of LSBs (which is what gives it screenshot-survival). The carrier is tiled into an N×N grid and each tile carries its own 100-bit watermark, so capacity scales with the grid: 12 B at 1×1, ~200 B at 4×4 for a 1080p carrier.
 
-The wire format has no plaintext magic bytes. A wrong password fails the GCM auth tag, which is indistinguishable from "no payload here" — so a watermarked carrier doesn't fingerprint as a Stegnokit file even to someone who knows the algorithm.
+🎵 **Audio** uses direct-sequence spread-spectrum. A pseudo-random ±1 chip sequence — keyed by the password — is band-pass filtered to 1.5–4.5 kHz (where MP3/AAC keep the most detail) and added to the carrier at low amplitude. About 43 bits/s at 44.1 kHz, so a 10-second voice note carries ~50 B of plaintext.
 
-## What it can't do
+🥷 **No fingerprint.** The wire format has zero plaintext magic bytes. A wrong password fails the GCM auth tag, which is indistinguishable from "no payload here" — so a watermarked carrier doesn't identify itself as a Stegnokit file even to someone who knows the algorithm.
 
-- Capacity is small. ~100–250 bytes per 1080p image, less for short audio. Don't try to hide a PDF.
-- Survives screenshots, format conversion, and mainstream chat-app re-encoding. Does *not* survive heavy crops, photos of screens at sharp angles, or downscales below ~480p.
-- The HF Spaces free tier sleeps after ~48 hours of inactivity. First request after sleep takes ~15 s while the container wakes; warm encodes are 3–5 s on CPU.
-- Animated GIFs aren't supported as carriers. TrustMark watermarks a still image and there's no clean way to keep the bits consistent across all frames after re-encoding.
-
-## Stack
+## 📦 Stack
 
 | Layer | Tech | Hosted on |
 |---|---|---|
 | Frontend | Vite · React · TypeScript · Tailwind · Framer Motion | Netlify |
-| Backend | FastAPI · Python 3.11 · TrustMark · NumPy/SciPy DSP | Hugging Face Spaces (Docker) |
+| Backend  | FastAPI · Python 3.11 · TrustMark · NumPy/SciPy DSP  | Hugging Face Spaces (Docker) |
 
 ```
 src/                          frontend
@@ -46,7 +45,7 @@ scripts/
   secret-scan.mjs             pre-deploy credential scanner
 ```
 
-## Run it locally
+## 💻 Run it locally
 
 Frontend:
 
@@ -73,7 +72,7 @@ pip install -r backend/requirements-dev.txt
 cd backend && pytest
 ```
 
-## Deploying
+## 🚀 Deploying
 
 The frontend auto-deploys to Netlify on every push to `main`. Build settings come from `netlify.toml` and security headers from `public/_headers`.
 

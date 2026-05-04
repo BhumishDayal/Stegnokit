@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import Response
 
 from .. import bits as bitops
@@ -10,6 +10,7 @@ from .. import codec
 from ..audio import formats as audio_formats
 from ..audio import quality, watermark
 from ..config import get_settings
+from ..ratelimit import limiter
 
 log = logging.getLogger("stegnokit.audio")
 router = APIRouter(prefix="/audio", tags=["audio"])
@@ -26,7 +27,13 @@ _MIME_BY_FORMAT = {
 
 
 @router.get("/capacity")
-async def capacity(seconds: float = 10.0, sample_rate: int = 44100, chip_samples: int = 1024):
+@limiter.limit("60/minute")
+async def capacity(
+    request: Request,
+    seconds: float = 10.0,
+    sample_rate: int = 44100,
+    chip_samples: int = 1024,
+):
     if seconds <= 0 or sample_rate <= 0:
         raise HTTPException(status_code=400, detail="seconds and sample_rate must be positive")
     samples = int(seconds * sample_rate)
@@ -43,7 +50,9 @@ async def capacity(seconds: float = 10.0, sample_rate: int = 44100, chip_samples
 
 
 @router.post("/encode")
+@limiter.limit("10/minute")
 async def encode_audio(
+    request: Request,
     audio: UploadFile = File(..., description="Carrier audio (WAV/FLAC/MP3/OGG/M4A)"),
     message: str = Form(..., min_length=1, max_length=4000),
     password: str = Form(..., min_length=1, max_length=256),
@@ -118,7 +127,9 @@ async def encode_audio(
 
 
 @router.post("/decode")
+@limiter.limit("20/minute")
 async def decode_audio(
+    request: Request,
     audio: UploadFile = File(...),
     password: str = Form(..., min_length=1, max_length=256),
     # 0 means "auto": try every chip size and return the first that decodes.

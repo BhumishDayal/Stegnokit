@@ -5,10 +5,14 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from . import __version__
 from .api import routes_audio, routes_health, routes_image
 from .config import get_settings
+from .ratelimit import limiter
 
 logging.basicConfig(
     level=logging.INFO,
@@ -24,6 +28,10 @@ def create_app() -> FastAPI:
         version=__version__,
         description="Robust steganography service: AES-GCM-encrypted payloads embedded in images and audio.",
     )
+
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_middleware(SlowAPIMiddleware)
 
     app.add_middleware(
         CORSMiddleware,

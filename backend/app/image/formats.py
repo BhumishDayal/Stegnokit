@@ -10,6 +10,11 @@ except ImportError:
     pass
 
 
+# Decompression-bomb protection: Pillow refuses anything over this pixel count.
+# 20M ≈ 4500×4500 — comfortably above our 4096×4096 dimension cap.
+Image.MAX_IMAGE_PIXELS = 20_000_000
+
+
 INPUT_FORMATS: set[str] = {"PNG", "JPEG", "JPG", "WEBP", "AVIF", "BMP", "TIFF", "GIF"}
 
 OUTPUT_FORMATS: dict[str, tuple[str, dict]] = {

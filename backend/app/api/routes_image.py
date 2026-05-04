@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import Response
 
 from .. import bits as bitops
 from .. import codec
 from ..config import get_settings
 from ..image import formats, quality, tiling
+from ..ratelimit import limiter
 
 log = logging.getLogger("stegnokit.image")
 router = APIRouter(prefix="/image", tags=["image"])
@@ -25,7 +26,8 @@ _MIME_BY_FORMAT = {
 
 
 @router.get("/capacity")
-async def capacity(grid: str = "capacity"):
+@limiter.limit("60/minute")
+async def capacity(request: Request, grid: str = "capacity"):
     """Return the byte capacity for a given tiling grid."""
     try:
         g = tiling.grid_for(grid)
@@ -42,7 +44,9 @@ async def capacity(grid: str = "capacity"):
 
 
 @router.post("/encode")
+@limiter.limit("10/minute")
 async def encode_image(
+    request: Request,
     image: UploadFile = File(..., description="Carrier image (PNG/JPEG/WebP/AVIF/BMP/TIFF)"),
     message: str = Form(..., min_length=1, max_length=4000),
     password: str = Form(..., min_length=1, max_length=256),
@@ -114,7 +118,9 @@ async def encode_image(
 
 
 @router.post("/decode")
+@limiter.limit("20/minute")
 async def decode_image(
+    request: Request,
     image: UploadFile = File(...),
     password: str = Form(..., min_length=1, max_length=256),
     grid: str = Form("auto"),
